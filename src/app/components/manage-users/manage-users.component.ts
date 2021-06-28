@@ -40,6 +40,8 @@ export class ManageUsersComponent implements OnInit, OnDestroy {
 
         // Get users from API
         this.usersService.getUsers().subscribe((users: User[]) => {
+            console.log(users);
+
             this.usersService.users = users;
             this.usersService.emitUsers();
         });
@@ -104,6 +106,8 @@ export class ManageUsersComponent implements OnInit, OnDestroy {
 
     onEditUser(user: User) {
         if (this.editUserForm.valid && this.connectedUser.admin) {
+            console.log(this.editUserForm.value.isAdmin);
+
             this.usersService.updateUser(user, { ...this.editUserForm.value, connectedUser: this.connectedUser }).subscribe(response => {
                 const index = this.usersService.users.findIndex(userElt => userElt.id === user.id);
                 this.usersService.users[index] = { ...user, username: this.editUserForm.value.username, admin: this.editUserForm.value.isAdmin };

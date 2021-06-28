@@ -12,4 +12,12 @@ export class MessagesService {
     postNewMessage(message: Message): Observable<Message> {
         return this.httpClient.post<Message>(this.apiUrl, message);
     }
+
+    updateMessage(message: Message): Observable<Message> {
+        return this.httpClient.patch<Message>(this.apiUrl + message.id, message);
+    }
+
+    deleteMessage(message: Message): Observable<any> {
+        return this.httpClient.delete(this.apiUrl + message.id);
+    }
 }

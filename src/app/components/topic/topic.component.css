@@ -12,6 +12,20 @@ li:not(li:last-child) {
     margin-bottom: var(--small-margin);
 }
 
+li .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li .message-header-icons mat-icon {
+    cursor: pointer;
+}
+
+li .message-header-icons mat-icon:hover {
+    color: var(--primary-color);
+}
+
 ul {
     margin-bottom: var(--large-margin);
 }

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -21,6 +22,8 @@ export class TopicComponent implements OnInit, OnDestroy {
     topic: Topic;
     topicSubscription: Subscription;
 
+    editedMessage?: Message;
+
     connectedUser: User;
     connectedUserSubscription: Subscription;
 
@@ -30,7 +33,8 @@ export class TopicComponent implements OnInit, OnDestroy {
         private topicsService: TopicsService,
         private messagesService: MessagesService,
         private route: ActivatedRoute,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit(): void {
@@ -41,7 +45,7 @@ export class TopicComponent implements OnInit, OnDestroy {
                 message.date = new Date(message.date);
                 return message;
             });
-            
+
             this.topic = topic;
         });
 
@@ -72,24 +76,46 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
     }
 
+    selectMessage(message: Message) {
+        if (this.editedMessage === message) {
+            this.editedMessage = undefined;
+            this.form.reset();
+        } else {
+            this.editedMessage = message;
+            this.form.controls.content.setValue(this.editedMessage.content);
+        }
+    }
+
+    onDeleteMessage(message: Message) {
+        this.messagesService.deleteMessage(message).subscribe(() => {
+            const msgIndex = this.topic.messages.findIndex(msg => msg.id === message.id);
+            if (msgIndex >= 0) {
+                this.topic.messages.splice(msgIndex, 1);
+                this.snackBar.open('Ce message a bien été supprimé', 'Fermer', { duration: 3000 });
+            }
+        }, error => {
+            this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
+        });
+    }
+
     onSubmit(): void {
-        if (this.form.valid) {
+        if (this.form.valid && !this.editedMessage) {
             const message: Message = {
                 content: this.form.value.content,
                 date: new Date().getTime(),
                 author: this.connectedUser,
                 topic: this.topic
             }
-    
+
             this.messagesService.postNewMessage(message).subscribe((message: Message) => {
                 this.topicsService.getTopic(this.topic.id!).subscribe((topic: Topic) => {
                     topic.date = new Date(topic.date);
-        
+
                     topic.messages = topic.messages.map((message: Message) => {
                         message.date = new Date(message.date);
                         return message;
                     });
-        
+
                     this.topic = topic;
                     this.topicsService.emitTopics();
 
@@ -101,6 +127,23 @@ export class TopicComponent implements OnInit, OnDestroy {
                         this.form.controls[formControlName].setErrors(null);
                     });
                 });
+            }, error => {
+                this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
+            });
+        } else if (this.form.valid && this.editedMessage) {
+            this.messagesService.updateMessage({ ...this.editedMessage, ...this.form.value }).subscribe((message: Message) => {
+                const messageIndex = this.topic.messages.findIndex(msg => msg.id === message.id);
+                if (messageIndex >= 0) {
+                    this.topic.messages.splice(messageIndex, 1, message);
+                    this.snackBar.open('Votre message a bien été modifié', 'Fermer', { duration: 3000 });
+                    this.form.reset();
+                    this.editedMessage = undefined;
+                    Object.keys(this.form.controls).forEach(formControlName => {
+                        this.form.controls[formControlName].setErrors(null);
+                    });
+                } else {
+                    this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
+                }
             }, error => {
                 this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
             });
@@ -117,7 +160,7 @@ export class TopicComponent implements OnInit, OnDestroy {
         }
     }
 
-    getErrorMessage(formControlName: string): string|void {
+    getErrorMessage(formControlName: string): string | void {
         if (this.form.controls[formControlName].hasError('required')) {
             return 'Ce champ est obligatoire';
         }

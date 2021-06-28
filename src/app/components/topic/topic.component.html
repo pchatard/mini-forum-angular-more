@@ -3,13 +3,21 @@
         <h2>{{ topic.title }}</h2>
         <button mat-raised-button color="primary" (click)="onRefreshMessages()">Actualiser les messages</button>
     </div>
-    
+
     <p id="topic-infos">{{ topic | topicInfos }}</p>
-    
+
     <ul>
         <li *ngFor="let message of topic.messages">
-            <h3>{{ message | messageInfos }}</h3>
-    
+            <div class="message-header">
+                <h3>{{ message | messageInfos }}</h3>
+                <span *ngIf="connectedUser.id === message.author.id || connectedUser.admin"
+                    class="message-header-icons">
+                    <mat-icon *ngIf="connectedUser.id === message.author.id" title="Modifier le message"
+                        (click)="selectMessage(message)">edit</mat-icon>
+                    <mat-icon title="Supprimer ce message" (click)="onDeleteMessage(message)">delete</mat-icon>
+                </span>
+            </div>
+
             <p>{{ message.content }}</p>
         </li>
     </ul>
@@ -22,5 +30,6 @@
         <mat-error *ngIf="true">{{ getErrorMessage('content') }}</mat-error>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" id="message-form-button">Répondre au sujet</button>
+    <button mat-raised-button color="primary" id="message-form-button">{{editedMessage? "Modifier mon message" :
+        "Répondre au sujet"}}</button>
 </form>
