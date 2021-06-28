@@ -49,6 +49,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
                 password: this.form.value.password,
                 passwordConfirm: this.form.value.passwordConfirm,
                 oldPassword: this.form.value.oldPassword,
+                admin: this.connectedUser.admin,
                 messages: [],
                 topics: []
             }
