@@ -29,10 +29,13 @@
                 <input type="text" matInput required [formControl]="editTopicControl">
                 <mat-error *ngIf="editTopicControl.invalid">{{ getErrorMessage(null, editTopicControl) }}</mat-error>
             </mat-form-field>
-            
-            <div class="action-buttons-container" *ngIf="connectedUser">
-                <button mat-raised-button color="primary" *ngIf="editedTopic !== topic" (click)="onChangeEditedTopic(topic)">Modifier</button>
-                <button mat-raised-button color="accent" *ngIf="editedTopic === topic" (click)="onEditTopic(topic)">Enregistrer</button>
+
+            <div class="action-buttons-container"
+                *ngIf="connectedUser && connectedUser.username === topic.author.username">
+                <button mat-raised-button color="primary" *ngIf="editedTopic !== topic"
+                    (click)="onChangeEditedTopic(topic)">Modifier</button>
+                <button mat-raised-button color="accent" *ngIf="editedTopic === topic"
+                    (click)="onEditTopic(topic)">Enregistrer</button>
 
                 <button mat-raised-button color="warn" (click)="onDeleteTopic(topic)">Supprimer</button>
             </div>

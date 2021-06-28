@@ -76,7 +76,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     }
 
     onEditTopic(topic: Topic): void {
-        if (this.editTopicControl.valid) {
+        if (this.editTopicControl.valid && topic.author.username === this.connectedUser.username) {
             this.topicsService.updateTopic(topic, this.editTopicControl.value).subscribe((topic: Topic) => {
                 this.topicsService.topics = this.topicsService.topics.map((topicElt: Topic) => {
                     if (topicElt.id === topic.id) {
@@ -84,13 +84,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
                     }
 
                     return topicElt;
-                 });
+                });
 
-                 this.topicsService.emitTopics();
+                this.topicsService.emitTopics();
 
-                 this.snackBar.open('Le titre du sujet a bien été modifié', 'Fermer', { duration: 3000 });
+                this.snackBar.open('Le titre du sujet a bien été modifié', 'Fermer', { duration: 3000 });
 
-                 this.editedTopic = undefined;
+                this.editedTopic = undefined;
             }, error => {
                 this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
             });
@@ -108,13 +108,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
 
         this.dialogRefSubscription = dialogRef.afterClosed().subscribe(confirm => {
-            if (confirm) {
+            if (confirm && topic.author.username === this.connectedUser.username) {
                 this.topicsService.deleteTopic(topic).subscribe(response => {
                     this.topicsService.topics = this.topicsService.topics.filter(topicElt => topicElt.id !== topic.id);
                     this.topicsService.emitTopics();
-        
+
                     this.editedTopic = undefined;
-        
+
                     this.snackBar.open('Le sujet a bien été supprimé', 'Fermer', { duration: 3000 });
                 }, error => {
                     this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
@@ -160,7 +160,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         }
     }
 
-    getErrorMessage(formControlName: string | null, formControlParam?: FormControl): string|void {
+    getErrorMessage(formControlName: string | null, formControlParam?: FormControl): string | void {
         const formControl = (formControlName !== null) ? this.form.controls[formControlName] : formControlParam;
 
         if (formControl!.hasError('required')) {
