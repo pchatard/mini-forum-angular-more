@@ -50,6 +50,10 @@ export class TopicComponent implements OnInit, OnDestroy {
             });
 
             this.topic = topic;
+
+            setInterval(() => {
+                this.onRefreshMessages(false);
+            }, 10000);
         });
 
         this.form = this.formBuilder.group({
@@ -61,9 +65,10 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
 
         this.usersService.emitConnectedUser();
+
     }
 
-    onRefreshMessages(): void {
+    onRefreshMessages(showSnackbar: boolean = true): void {
         this.topicsService.getTopic(this.topic.id!).subscribe((topic: Topic) => {
             topic.date = new Date(topic.date);
 
@@ -73,7 +78,9 @@ export class TopicComponent implements OnInit, OnDestroy {
             });
 
             this.topic = topic;
-            this.snackBar.open('Messages actualisés', 'Fermer', { duration: 3000 });
+            if (showSnackbar) {
+                this.snackBar.open('Messages actualisés', 'Fermer', { duration: 3000 });
+            }
         }, error => {
             this.snackBar.open('Une erreur est survenue lors de l\'actualisation des messages', 'Fermer', { duration: 3000 });
         });
