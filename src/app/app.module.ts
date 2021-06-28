@@ -25,6 +25,7 @@ import { DialogConfirmComponent } from './dialogs/dialog-confirm.component';
 /* Pipes */
 import { TopicInfosPipe } from './pipes/TopicInfos.pipe';
 import { MessageInfosPipe } from './pipes/MessageInfos.pipe';
+import { MessageContentPipe } from './pipes/MessageContent.pipe';
 
 /* Services */
 import { UsersService } from './services/UsersService';
@@ -53,7 +54,8 @@ import { MatIconModule } from '@angular/material/icon';
         TopicInfosPipe,
         MessageInfosPipe,
         DialogConfirmComponent,
-        ManageUsersComponent
+        ManageUsersComponent,
+        MessageContentPipe
     ],
     imports: [
         BrowserModule,

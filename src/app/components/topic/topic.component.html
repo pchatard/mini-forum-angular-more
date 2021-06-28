@@ -10,7 +10,7 @@
         <li *ngFor="let message of topic.messages">
             <div class="message-header">
                 <h3>{{ message | messageInfos }}</h3>
-                <span *ngIf="connectedUser.id === message.author.id || connectedUser.admin"
+                <span *ngIf="connectedUser && (connectedUser.id === message.author.id || connectedUser.admin)"
                     class="message-header-icons">
                     <mat-icon *ngIf="connectedUser.id === message.author.id" title="Modifier le message"
                         (click)="selectMessage(message)">edit</mat-icon>
@@ -18,7 +18,7 @@
                 </span>
             </div>
 
-            <p>{{ message.content }}</p>
+            <p [innerHTML]="message.content | messageContent"></p>
         </li>
     </ul>
 </div>
