@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DialogConfirmComponent } from 'src/app/dialogs/dialog-confirm.component';
 import { Message } from 'src/app/models/Message';
 import { Topic } from 'src/app/models/Topic';
 import { User } from 'src/app/models/User';
@@ -26,6 +27,8 @@ export class TopicComponent implements OnInit, OnDestroy {
 
     connectedUser: User;
     connectedUserSubscription: Subscription;
+
+    dialogRefSubscription: Subscription;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -87,15 +90,31 @@ export class TopicComponent implements OnInit, OnDestroy {
     }
 
     onDeleteMessage(message: Message) {
-        this.messagesService.deleteMessage(message).subscribe(() => {
-            const msgIndex = this.topic.messages.findIndex(msg => msg.id === message.id);
-            if (msgIndex >= 0) {
-                this.topic.messages.splice(msgIndex, 1);
-                this.snackBar.open('Ce message a bien été supprimé', 'Fermer', { duration: 3000 });
+        const dialogRef = this.dialog.open(DialogConfirmComponent, {
+            data: {
+                title: 'Êtes-vous sûr de vouloir supprimer ce message ?',
+                content: 'Cette action est irréversible.',
+                action: 'Supprimer'
+            },
+            autoFocus: false
+        });
+
+        this.dialogRefSubscription = dialogRef.afterClosed().subscribe(confirm => {
+            if (confirm) {
+                this.messagesService.deleteMessage(message).subscribe(() => {
+                    const msgIndex = this.topic.messages.findIndex(msg => msg.id === message.id);
+                    if (msgIndex >= 0) {
+                        this.topic.messages.splice(msgIndex, 1);
+                        this.snackBar.open('Ce message a bien été supprimé', 'Fermer', { duration: 3000 });
+                    }
+                }, error => {
+                    this.snackBar.open('Une erreur est survenue', 'Fermer', { duration: 3000 });
+                });
             }
         }, error => {
-            this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
+            this.snackBar.open('Une erreur est survenue', 'Fermer', { duration: 3000 });
         });
+
     }
 
     onSubmit(): void {
@@ -151,6 +170,10 @@ export class TopicComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        if (this.dialogRefSubscription) {
+            this.dialogRefSubscription.unsubscribe();
+        }
+
         if (this.connectedUserSubscription) {
             this.connectedUserSubscription.unsubscribe();
         }
