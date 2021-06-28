@@ -52,8 +52,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
                 messages: [],
                 topics: []
             }
-    
-            this.usersService.updateUser(user).subscribe((user: User) => {
+
+            this.usersService.updateUser(this.connectedUser, user).subscribe((user: User) => {
                 if (localStorage.getItem('connectedUser')) {
                     this.usersService.saveConnectedUserToLocalStorage(user);
                 } else {
@@ -64,7 +64,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
                 this.topicsService.refreshTopics();
 
                 this.snackBar.open('Votre compte a bien été modifié', 'Fermer', { duration: 3000 });
-                
+
                 this.router.navigate(['/']);
             }, error => {
                 this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
@@ -88,7 +88,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
 
                 this.usersService.getUsers().subscribe((users: User[]) => {
                     if (users.find(user => user.username === control.value)) {
-                        observer.next({uniqueName: {value: control.value}});
+                        observer.next({ uniqueName: { value: control.value } });
                     } else {
                         observer.next(null);
                     }
@@ -109,7 +109,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
                 if (this.form.controls.passwordConfirm.hasError('samePasswordConfirm')) {
                     try {
                         this.form.controls.passwordConfirm.updateValueAndValidity();
-                    } catch(error) { }
+                    } catch (error) { }
                 }
             }
 
@@ -133,7 +133,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
         }
     }
 
-    getErrorMessage(formControlName: string): string|void {
+    getErrorMessage(formControlName: string): string | void {
         if (this.form.controls[formControlName].hasError('required')) {
             return 'Ce champ est obligatoire';
         }

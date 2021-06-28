@@ -1,0 +1,30 @@
+<mat-form-field>
+    <mat-label>Filtrer par nom d'utilisateur</mat-label>
+    <input matInput type="text" [formControl]="filterControl">
+</mat-form-field>
+
+<ul>
+    <li *ngFor="let user of filteredUsers">
+        <mat-accordion>
+            <mat-expansion-panel [expanded]="editedUser === user" disabled="true" hideToggle="true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>{{user.username}}</mat-panel-title>
+                    <div class="action-buttons-container">
+                        <button mat-raised-button color="primary" (click)="selectUser(user)">Modifier</button>
+                        <button mat-raised-button color="warn" (click)="onDeleteUser(user)">Supprimer</button>
+                    </div>
+                </mat-expansion-panel-header>
+                <form [formGroup]="editUserForm" (ngSubmit)="onEditUser(user)">
+                    <mat-form-field>
+                        <mat-label>Nom d'utilisateur</mat-label>
+                        <input type="text" matInput required formControlName="username">
+                        <mat-error *ngIf="true">{{ getErrorMessage('username') }}</mat-error>
+                    </mat-form-field>
+                    <mat-checkbox color="primary" formControlName="isAdmin">Admin</mat-checkbox>
+                    <button mat-raised-button color="accent">Submit</button>
+                </form>
+            </mat-expansion-panel>
+        </mat-accordion>
+
+    </li>
+</ul>

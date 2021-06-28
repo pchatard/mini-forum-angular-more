@@ -1,10 +1,14 @@
 <header>
     <nav>
         <ul>
-            <li routerLinkActive="nav-active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/">Accueil</a></li>
+            <li routerLinkActive="nav-active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/">Accueil</a>
+            </li>
             <li *ngIf="!connectedUser" routerLinkActive="nav-active"><a routerLink="sign-in">Créer un compte</a></li>
             <li *ngIf="!connectedUser" routerLinkActive="nav-active"><a routerLink="login">Se connecter</a></li>
-            <li *ngIf="connectedUser" routerLinkActive="nav-active"><a routerLink="edit-user">Modifier mon compte</a></li>
+            <li *ngIf="connectedUser" routerLinkActive="nav-active"><a routerLink="edit-user">Modifier mon compte</a>
+            </li>
+            <li *ngIf="connectedUser && connectedUser.admin" routerLinkActive="nav-active"><a
+                    routerLink="manage-users">Gérer les utilisateurs</a></li>
             <li *ngIf="connectedUser" routerLinkActive="nav-active"><a routerLink="logout">Se déconnecter</a></li>
         </ul>
     </nav>
