@@ -31,7 +31,7 @@
             </mat-form-field>
 
             <div class="action-buttons-container"
-                *ngIf="connectedUser && connectedUser.username === topic.author.username">
+                *ngIf="connectedUser && (connectedUser.username === topic.author.username || connectedUser.admin)">
                 <button mat-raised-button color="primary" *ngIf="editedTopic !== topic"
                     (click)="onChangeEditedTopic(topic)">Modifier</button>
                 <button mat-raised-button color="accent" *ngIf="editedTopic === topic"

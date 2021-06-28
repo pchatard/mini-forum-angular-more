@@ -76,7 +76,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     }
 
     onEditTopic(topic: Topic): void {
-        if (this.editTopicControl.valid && topic.author.username === this.connectedUser.username) {
+        if (this.editTopicControl.valid && (topic.author.username === this.connectedUser.username || this.connectedUser.admin)) {
             this.topicsService.updateTopic(topic, this.editTopicControl.value).subscribe((topic: Topic) => {
                 this.topicsService.topics = this.topicsService.topics.map((topicElt: Topic) => {
                     if (topicElt.id === topic.id) {
@@ -108,7 +108,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
 
         this.dialogRefSubscription = dialogRef.afterClosed().subscribe(confirm => {
-            if (confirm && topic.author.username === this.connectedUser.username) {
+            if (confirm && (topic.author.username === this.connectedUser.username || this.connectedUser.admin)) {
                 this.topicsService.deleteTopic(topic).subscribe(response => {
                     this.topicsService.topics = this.topicsService.topics.filter(topicElt => topicElt.id !== topic.id);
                     this.topicsService.emitTopics();

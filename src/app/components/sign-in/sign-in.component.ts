@@ -40,7 +40,7 @@ export class SignInComponent implements OnInit {
                 messages: [],
                 topics: []
             }
-    
+
             this.usersService.createNewUser(user).subscribe((user: User) => {
                 if (this.form.value.rememberMe) {
                     this.usersService.saveConnectedUserToLocalStorage(user);
@@ -50,7 +50,7 @@ export class SignInComponent implements OnInit {
                 }
 
                 this.snackBar.open('Votre compte a bien été créé', 'Fermer', { duration: 3000 });
-    
+
                 this.router.navigate(['/']);
             }, error => {
                 this.snackBar.open('Une erreur est survenue. Veuillez vérifier votre saisie', 'Fermer', { duration: 3000 });
@@ -63,7 +63,7 @@ export class SignInComponent implements OnInit {
             return new Observable<ValidationErrors | null>(observer => {
                 this.usersService.getUsers().subscribe((users: User[]) => {
                     if (users.find(user => user.username === control.value)) {
-                        observer.next({uniqueName: {value: control.value}});
+                        observer.next({ uniqueName: { value: control.value } });
                     } else {
                         observer.next(null);
                     }
@@ -84,7 +84,7 @@ export class SignInComponent implements OnInit {
                 if (this.form.controls.passwordConfirm.hasError('samePasswordConfirm')) {
                     try {
                         this.form.controls.passwordConfirm.updateValueAndValidity();
-                    } catch(error) { }
+                    } catch (error) { }
                 }
             }
 
@@ -108,7 +108,7 @@ export class SignInComponent implements OnInit {
         }
     }
 
-    getErrorMessage(formControlName: string): string|void {
+    getErrorMessage(formControlName: string): string | void {
         if (this.form.controls[formControlName].hasError('required')) {
             return 'Ce champ est obligatoire';
         }

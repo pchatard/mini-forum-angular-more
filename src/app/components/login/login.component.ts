@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
         }
     }
 
-    getErrorMessage(formControlName: string): string|void {
+    getErrorMessage(formControlName: string): string | void {
         if (this.form.controls[formControlName].hasError('required')) {
             return 'Ce champ est obligatoire';
         }
